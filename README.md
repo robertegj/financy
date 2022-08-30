@@ -1,2 +1,2 @@
 # financy  
-(https://robertegj.github.io/financy/)[View Live]
+[View Live](https://robertegj.github.io/financy/)
