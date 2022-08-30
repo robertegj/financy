@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                text-align: center;
+            }
+            #items {
+                text-align: left;
+                max-width: 400px;
+                margin: auto;
+                border: 2px solid grey;
+                border-radius: 2px;
+            }
+            #items:empty { 
+                border: none;
+            }
+            table {
+            border-collapse: collapse;
+            width: 100%;
+            }
+            th, td {
+                text-align: center;
+            }
+            th, td {
+            padding: 8px;
+            border-bottom: 1px solid #DDD;
+            }
+            .redBG { background: tomato; }
+            .greenBG { background: greenyellow; }
+            tr:hover {background-color: #D6EEEE;}
+        </style>
+    </head>
+    <body>
+        <h1>Financy</h1>
+        <p>Lets do money</p>
+
+
+        <h2>Items</h2>
+        <table id="items">
+            <th>Item Name</th>
+            <th>Price</th>
+        </table>
+        <h3>Total: <span id="total">0</span><span>$</span></h3>
+ 
+        <br />
+
+        <input type="text" id="name" placeholder="Hot Dogs">
+        <input type="number" id="price" placeholder="$5"/>
+        <input type="Submit" value="Add Item" onclick="addItemButton()" />
+        <button onclick="localStorage.clear();location.reload()">Clear</button>
+
+
+
+    </body>
+    <script>
+
+        // Adds up all values with 'price' class and puts it in the total to display
+        function sumTotal() {
+            var prices = document.getElementsByClassName("price");
+            var total = 0;
+            for(var i = 0; i < prices.length; i++){
+                total += Number(prices[i].innerText);
+            }
+            document.getElementById("total").innerText = total;
+            if (total > 0) {
+                document.getElementById("total").classList.remove("redBG");
+                document.getElementById("total").classList.add("greenBG");
+            } else {
+                document.getElementById("total").classList.remove("greenBG");
+                document.getElementById("total").classList.add("redBG");
+            }
+        }
+
+        // Load items
+        if(typeof(localStorage["savedItems"]) !== 'undefined'){
+            var savedItems = JSON.parse(localStorage.getItem("savedItems"));
+        } else {
+            var savedItems = [];
+        }
+        for (var i = 0;i < savedItems.length;i++) {
+            var aname = savedItems[i].name;
+            var price = savedItems[i].price;
+            addItem(aname, price);
+        }
+        
+
+        function addItem(name, price){
+            var items = document.getElementById("items");
+
+            itemRow = document.createElement("tr");
+            itemRow.draggable = "true";
+            nameCell = document.createElement("td");
+            priceCell = document.createElement("td");
+            deleteCell = document.createElement("td");
+            priceCell.classList.add("price");
+            nameCell.innerText = name;
+            priceCell.innerText = price;
+            if (price > 0) {
+                priceCell.classList.add("greenBG");
+            } else {
+                priceCell.classList.add("redBG");
+            }
+            deleteCell.innerText = "❌";
+            deleteCell.onclick = deleteItemButton;
+            itemRow.appendChild(nameCell);
+            itemRow.appendChild(priceCell);
+            itemRow.appendChild(deleteCell);
+            items.appendChild(itemRow);
+
+            sumTotal();
+        }
+
+        function addItemButton() {
+            var aname = document.getElementById("name").value;
+            var price = document.getElementById("price").value;
+            addItem(aname, price);
+            item = {"name":aname,"price":price};
+            savedItems.push(item);
+            localStorage.setItem("savedItems", JSON.stringify(savedItems));
+        }
+
+        function deleteItemButton() {
+            this.parentNode.remove();
+            index = this.parentNode.DOCUMENT_POSITION_PRECEDING - 1;
+            savedItems.pop(index);
+            localStorage.setItem("savedItems", JSON.stringify(savedItems));
+            sumTotal();
+        }
+    </script>
+</html>
